@@ -1,0 +1,358 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>RMSDとRMSF - 分子動力学 step by step</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "ayu" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../introduction.html"><strong aria-hidden="true">1.</strong> イントロダクション</a></li><li class="chapter-item expanded "><a href="../decide_structure.html"><strong aria-hidden="true">2.</strong> 計算するタンパク質の決定</a></li><li class="chapter-item expanded "><a href="../prepare_system.html"><strong aria-hidden="true">3.</strong> 計算の準備</a></li><li class="chapter-item expanded "><a href="../minimization.html"><strong aria-hidden="true">4.</strong> 構造最適化</a></li><li class="chapter-item expanded "><a href="../heat.html"><strong aria-hidden="true">5.</strong> ヒーティング</a></li><li class="chapter-item expanded "><a href="../sampling.html"><strong aria-hidden="true">6.</strong> サンプリング</a></li><li class="chapter-item expanded "><a href="../analyse/index.html"><strong aria-hidden="true">7.</strong> 解析</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../analyse/rmsd_and_rmsf.html" class="active"><strong aria-hidden="true">7.1.</strong> RMSDとRMSF</a></li><li class="chapter-item expanded "><a href="../analyse/pca.html"><strong aria-hidden="true">7.2.</strong> 主成分解析</a></li></ol></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">分子動力学 step by step</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/flat35hd99/md_stepbystep" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="rmsdとrmsf"><a class="header" href="#rmsdとrmsf">RMSDとRMSF</a></h1>
+<p>シミュレーションを実施したときは、必ずそのシミュレーションが正確に行われたか、不自然な振る舞いをしていないか確認する必要がある。RMSDとRMSFはこのときよく使われる指標の一つである。RMSDとRMSFはそれぞれ Root Mean Square of Deviation と Root Mean Square of Fluctuation の略である。以下に定義を示す。</p>
+<p>\[ \rm{RMSD} = \min_{trans, rot} \sqrt{\frac{1}{N}\sum d^2} \]</p>
+<p>\[ \rm{RMSF_j} = \sqrt{\langle \left(R_j - \langle R_j \rangle\right)^2 \rangle} \]</p>
+<p>RMSDの表示に用いた\(d\)は座標と座標の間の距離を示す。RMSFの表示に用いた\(R_j\)は座標を示している。</p>
+<p>これだけだとパッとはわからないので、それぞれ説明する。</p>
+<h2 id="rmsd"><a class="header" href="#rmsd">RMSD</a></h2>
+<p>RMSDは、ある参照となる構造、例えばそのシミュレーションの最初の構造や、構造最適化が終わった構造、あるいは単に結晶構造解析の結果得られた構造と比較して、構造がどれだけ変化したかを示す。</p>
+<p>定義の説明で、\(d\)をなにとなにの間の座標か示さなかったのだが、RMSDはいろいろな距離で計算することが多い。例えばタンパク質の主鎖の\(\rm{C}_\alpha\)原子の座標同士の距離でRMSDを計算すれば、主鎖がどれだけ変化したかという情報だけを抜き取ることができ、変化の大きい側鎖の影響を忘れることができる。逆に側鎖の情報も取り入れたいときは、アミノ酸残基ごとの重心の距離を比較すればいい。</p>
+<p>\[ d = R - R_{ref} \]
+\[ \rm{RMSD} = \min_{trans, rot} \sqrt{\frac{1}{N}\sum d^2} \]</p>
+<p>さて、実際のケースで考えてみよう。今あなたの手元には、36残基のタンパク質、1VIIのシミュレーション結果があるとしよう。AMBERで得られた計算結果なので、cpptrajでRMSDとRMSFを計算するのが簡単だろう。このときのcpptrajへのコマンド入力は以下のようになる。</p>
+<pre><code class="language-cpptraj.in"># Load parameters, trajectory, and reference structure
+parm system.prmtop
+trajin md.crd.nc
+reference system.crd [crd]
+
+# Calculate RMSD
+rmsd rmsd_all  ref [crd] :1-36&amp;!@H= out rmsd_mass_all.agr 
+rmsd rmsd_c_alpha ref [crd] @CA out rmsd_c_alpha.agr
+
+run
+quit
+</code></pre>
+<p>順に説明しよう。以下に最初のコードブロックを抜き出した。</p>
+<pre><code class="language-cpptraj_head.in"># Load parameters, trajectory, and reference structure
+parm system.prmtop
+trajin md.crd.nc
+reference system.crd [crd]
+</code></pre>
+<p>ここでは、次のように、このあとRMSDを計算するための準備をしている。</p>
+<ol>
+<li><code>parm system.prmtop</code>でシステムの基本情報を読み込む。原子の名前、各原子がどの残基に所属するか、原子の質量や電荷など。</li>
+<li><code>trajin md.crd.nc</code>でシミュレーションによって得られた軌道情報を読み込む。</li>
+<li><code>reference system.crd [crd]</code>でRMSDを計算するための参照構造を読み込む。ここではminimizationする前の、結晶構造解析によって得られた構造を、Leapで加工した構造を読み込んでいる。</li>
+</ol>
+<p>次のコードブロックでは、実際にRMSDを計算している。</p>
+<pre><code class="language-cpptraj_calculate"># Calculate RMSD
+rmsd rmsd_all  ref [crd] :1-36&amp;!@H= out rmsd_mass_all.agr 
+rmsd rmsd_c_alpha ref [crd] @CA out rmsd_c_alpha.agr
+</code></pre>
+<p>先にrmsdコマンドの文法を確認しておく。</p>
+<pre><code>rmsd &lt;name&gt; ref &lt;reference name&gt; &lt;range&gt; out &lt;filename&gt;
+</code></pre>
+<p><code>&lt;name&gt;</code>はあとの利便性のために、そのRMSDの名前を宣言する。<code>rmsd_all</code>, <code>rmsd_c_alpha</code> が対応する。</p>
+<p><code>ref</code>の次の<code>&lt;reference name&gt;</code>では、参照構造を指定する。準備のコードブロックにおいて、<code>reference</code>コマンドでファイルを指定し、<code>[crd]</code>と名づけたものを、ここで指定している。</p>
+<p><code>&lt;range&gt;</code>は少々やっかいであるが、これはRMSDを計算する残基や原子を指定する箇所である。この指定方法の詳細はAmberのmanualを確認してほしいのだが、</p>
+<ul>
+<li><code>:1-36&amp;!@H=</code>は<code>:1-36</code>で残基番号1から36、この場合タンパク質だけを取りだしたのち、そこから水素だけは省くという指定。</li>
+<li><code>@CA</code>は\(\rm{C\alpha}\)だけ取り出す（それ以外のものは省く）という指定。</li>
+</ul>
+<p>となっている。</p>
+<p>最後に<code>out</code>に続けて出力先のファイル名を指定して、rmsdコマンドは終わりである。その他にもいろいろなオプションがあるが、簡単にシミュレーションの結果を確認するだけならこれで十分なことが多い。</p>
+<p>最初に示したものを<code>cpptraj_rmsd.in</code>として保存すれば、以下のようにして実行できる。</p>
+<pre><code class="language-console">cpptraj -i cpptraj_rmsd.in
+</code></pre>
+<p>実行すると、ファイルを読み込んで、順に処理していく様子が確認できるはずだ。実行が正常に完了すれば、カレントディレクトリに<code>rmsd_mass_all.agr</code>と<code>rmsd_c_alpha.agr</code>の二つのファイルが出力されている。</p>
+<p>中身を確認すると、以下のようになっている。</p>
+<pre><code class="language-dat">@with g0
+@  xaxis label &quot;Frame&quot;
+@  yaxis label &quot;&quot;
+@  legend 0.2, 0.995
+@  legend char size 0.60
+@  s0 legend &quot;rmsd_all&quot;
+@target G0.S0
+@type xy
+    1.000       2.5316
+    2.000       2.5700
+    3.000       2.5328
+    4.000       2.5624
+    5.000       2.5104
+    6.000       2.5259
+    7.000       2.4947
+    8.000       2.4968
+    9.000       2.4982
+   10.000       2.4898
+   11.000       2.5248
+   12.000       2.4692
+</code></pre>
+<p>大事なのは<code>    1.000       2.5316</code>以降の行である。左の列がフレーム番号、右の列がそのフレーム時点でのRMSDを示している。cpptrajの場合、RMSDの単位はオングストローム。</p>
+<p>これだけだとなんのインサイトも得られないので、グラフ化する。実はcpptrajの<code>.agr</code>フォーマットは対応するソフトウェアがあり、それに読み込ませることでグラフ生成してくれるのだが、あまり汎用性がないのでpythonで処理してしまうことにする。同じディレクトリに次のpythonファイルを<code>plot_rmsd.py</code>と保存して、<code>python plot_rmsd.py</code>として実行しよう。</p>
+<pre><code class="language-python">import pandas as pd
+import matplotlib.pyplot as plt
+
+# Specity input and output
+rmsd_file = &quot;rmsd_mass_all.agr&quot;
+output_image_file = &quot;rmsd_all.png&quot;
+
+df = pd.read_table(
+    rmsd_file,
+    skiprows=8,
+    names=[&quot;frame&quot;, &quot;rmsd&quot;],
+    delim_whitespace=True
+)
+
+fig, ax = plt.subplots()
+fig.patch.set_facecolor(&quot;white&quot;)
+ax.plot(df[&quot;frame&quot;], df[&quot;rmsd&quot;])
+
+plt.savefig(output_image_file)
+</code></pre>
+<p>このように実行すると、<code>rmsd_all.png</code>はこのようなグラフになっている。</p>
+<p><img src="images/rmsd.png" alt="RMSD output example" /></p>
+<p>横軸は各フレーム、縦軸はRMSD、単位はオングストローム。</p>
+<p>このシミュレーションは2000000ステップ（200万ステップ）なのだが、シミュレーション中100ステップに一回座標を出力させていたため、20000ステップそれぞれのRMSDが計算され、そのままグラフとして表示された。</p>
+<p>ここで一つ注意がある。それは、RMSDは各フレームに対して一つの値が計算されるということである。これは、この後説明するRMSFと大きく違うことを、頭の片隅にいれておいていただきたい。</p>
+<h2 id="rmsf"><a class="header" href="#rmsf">RMSF</a></h2>
+<p>RMSFは、あるアミノ酸残基、アミノ酸側鎖などが、どれだけ揺らいだか（Fluctuation）を測る指標となる。定義を再度示そう。</p>
+<p>\[ \rm{RMSF_j} = \sqrt{\langle \left(R_j - \langle R_j \rangle\right)^2 \rangle} \]</p>
+<p>ここで\(\rm{j}\)とおいたのは、たとえばアミノ酸残基の重心座標であったり、アミノ酸側鎖の重心座標であることが多い。論文によっては、RMSFの大きさによって、そのアミノ酸残基や側鎖のタンパク質の機能における役割、またはその重要性について議論されていることもある。（要出典）</p>
+<p>さて、ここでRMSDとRMSFの対比を行っておこう。RMSDはさきほど見たとおり、各フレームに対して計算されるものであった。一方のRMSFは、シミュレーション全体を通して、あるグループ（側鎖や残基）に対して一つの値が計算される。</p>
+<p>これも実際の例で見てみよう。RMSDの計算で用いたcpptrajを使い、計算する。</p>
+<pre><code class="language-cpptraj.in"># Load parameters, trajectory, and reference structure
+parm system.prmtop
+trajin md.crd.nc
+reference system.crd [crd]
+
+# Calculate RMSF
+rmsf side :1-36&amp;!@N,H,CA,HA,C,O= byres out rmsf_residue.agr
+
+run
+quit
+</code></pre>
+<p>最初の4行はRMSDと同じで、違うのは</p>
+<pre><code class="language-cpptraj"># Calculate RMSF
+rmsf side :1-36&amp;!@N,H,CA,HA,C,O= byres out rmsf_side.agr
+</code></pre>
+<p>のところである。構文の説明を端折るが、<code>byres</code>という指定をすることで、アミノ酸残基ごとに値を計算してくれるようになる。しかしこの場合原子の指定で主鎖の原子を全て取り除くように指定しているため、結果的に各側鎖だけのRMSFを計算することになる。</p>
+<p>これも<code>cpptraj -i cpptraj_rmsf.in</code>として実行することで、<code>rmsf_side.agr</code>が出力される。</p>
+<p>以下にその様子を示す。</p>
+<pre><code class="language-dat">@with g0
+@  xaxis label &quot;Res&quot;
+@  yaxis label &quot;&quot;
+@  legend 0.2, 0.995
+@  legend char size 0.60
+@  s0 legend &quot;RESIDUE&quot;
+@target G0.S0
+@type xy
+   1.000       7.4736
+   2.000       4.3284
+   3.000       6.7539
+   4.000       5.5169
+   5.000       6.8677
+   6.000       5.8924
+   7.000       2.4126
+   8.000       5.2326
+   9.000       5.5578
+  10.000       3.7109
+  11.000       1.4804
+  12.000       4.0884
+</code></pre>
+<p>グラフ化してみよう。</p>
+<pre><code class="language-python">import pandas as pd
+import matplotlib.pyplot as plt
+
+# Specity input and output
+rmsf_file = &quot;rmsf_residue.agr&quot;
+output_image_file = &quot;rmsf_side.png&quot;
+
+df = pd.read_table(
+    rmsf_file,
+    skiprows=8,
+    names=[&quot;residue number&quot;, &quot;rmsf&quot;],
+    delim_whitespace=True
+)
+
+fig, ax = plt.subplots()
+fig.patch.set_facecolor(&quot;white&quot;)
+ax.plot(df[&quot;residue number&quot;], df[&quot;rmsf&quot;])
+
+plt.savefig(output_image_file)
+</code></pre>
+<p><img src="images/rmsf.png" alt="rmsf example" /></p>
+<p>縦軸はRMSFで単位はオングストローム、横軸は1始まり36終わりのアミノ酸残基番号に対応する。</p>
+<p>アミノ酸残基の数である36と同じところまであることを確認されたい。これでたしかに各残基ごと（この場合側鎖ごど）に結果が得られたことがわかる。</p>
+<p>RMSFは一般にN末端とC末端、また、二次構造を作っていない箇所で大きくなりやすい。実際にこのデータでもN末端（1側）は大きくなっている。</p>
+<p>さて、RMSFもタンパク質の動的な性質を示すために利用されるが、もっとインスタントに、計算結果の妥当性の評価にも利用される。具体的には、N末端とC末端を除いた箇所で、RMSFが大きな値を取っていないか確認するために利用される。この視点で見ると、今回のシミュレーションのRMSFは<strong>かなり大きい</strong>。このシミュレーションではタンパク質が小さく、かつ、残基ではなく、ゆらぎの大きい側鎖のRMSFを計算したからこのような結果になったのだと推察するが、それにしても大きい。こういうデータがあなたの計算で得られたのなら、一度先生や先輩と相談することを強く推奨する。計算の仕方にもよるが、RMSFが5以下はまあまあいいかな、5周辺をうろちょろしていたり、6, 7を叩くようだと、red flagとなる。もちろん、本質的にゆらぎの大きいN末端やC末端が6, 7近いのは仕方ないので、restrainでもかけていない場合は大きな値を取っていてももっぱら無視される。</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../analyse/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../analyse/pca.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../analyse/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../analyse/pca.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>
