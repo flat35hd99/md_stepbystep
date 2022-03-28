@@ -7,3 +7,6 @@ title = "分子動力学 step by step"
 
 [output.html]
 mathjax-support = true
+preferred-dark-theme = "ayu"
+git-repository-url = "https://github.com/flat35hd99/md_stepbystep"
+site-url = "/md_stepbystep/"
