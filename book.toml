@@ -3,7 +3,7 @@ authors = ["flat35hd99"]
 language = "en"
 multilingual = false
 src = "src"
-title = "分子動力学 step by step"
+title = "分子動力学 Step by Step"
 
 [output.html]
 mathjax-support = true
